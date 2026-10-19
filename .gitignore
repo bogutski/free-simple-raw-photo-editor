@@ -39,3 +39,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# исходники RAW (лежат только локально)
+/sources/*
+!/sources/.gitkeep
+
+# кэш миниатюр
+/.cache/
+
+# служебные файлы браузерных проверок
+/.playwright-mcp/
+
+# веса нейросетей (большие файлы)
+/models/
