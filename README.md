@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Free Simple RAW Photo Editor
 
-## Getting Started
+A minimal, local RAW photo editor in the spirit of Lightroom's Develop module, built with Next.js.
+Your RAW files never leave your machine and are never modified: edits are stored next to each file
+in a small JSON sidecar.
 
-First, run the development server:
+## Features
+
+- **RAW decoding in the browser** with LibRaw (WebAssembly), processed in linear light on the GPU (WebGL2).
+- **Basic adjustments:** white balance (Temp/Tint), Exposure, Contrast, Lights & Darks, Texture, Clarity,
+  Vibrance, Saturation, Sharpening.
+- **Color Mixer:** Hue / Saturation / Luminance for eight color bands (Red … Magenta).
+- **Crop & rotate** with aspect presets, portrait/landscape flip and drag-to-rotate.
+- **Auto:** one-click adjustments, applied automatically when a photo is opened for the first time.
+  White balance is estimated with the C5 neural network when its model is installed.
+- **AI noise reduction** with SCUNet (optional, needs the model).
+- **Filmstrip** with thumbnails that reflect your edits, multi-select, and copy/paste of color settings (⌘C / ⌘V).
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 and put your RAW files into the `sources/` folder.
+Supported formats: RAF, DNG, NEF, NRW, ARW, SR2, SRF, CR2, ORF, PEF, RW2.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Edits are saved as `sources/<file>.json`. Thumbnails and AI results are cached in `.cache/`,
+which can be deleted at any time.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## AI models (optional)
 
-## Learn More
+Model weights are not included in the repository. Put them into the `models/` folder:
 
-To learn more about Next.js, take a look at the following resources:
+| File | Used for | Source | License |
+| --- | --- | --- | --- |
+| `c5_m_7_h_64_w_g.onnx` | Auto white balance | [C5](https://github.com/mahmoudnafifi/C5), exported to ONNX | Apache-2.0 |
+| `scunet_real_psnr_coreml_512.onnx` | AI noise reduction | [SCUNet](https://github.com/cszn/SCUNet), exported to ONNX with a fixed 512×512 input | Apache-2.0 |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Without the models the editor still works: Auto falls back to a statistical white balance,
+and AI noise reduction is unavailable. Noise reduction uses ONNX Runtime's CoreML execution
+provider and is tuned for Apple Silicon Macs.
